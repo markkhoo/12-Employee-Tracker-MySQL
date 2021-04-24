@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
     port: 3306,
     user: 'root',
     password: 'password',
-    database: 'companyTracker',
+    database: 'company_DB',
 });
 
 // Init connection
@@ -16,5 +16,93 @@ connection.connect((err) => {
     console.log(`connected as id ${connection.threadId}\n`);
 
     // Run initial prompt
-
+    initPrompt();
 });
+
+// Function give users the options to search
+function initPrompt() {
+    inquirer.prompt({
+        name: 'choices',
+        type: 'list',
+        message: 'What would you like to do?',
+        choices: [
+            'View All Employees', 
+            'View Employees by Department', 
+            'View Employees by Manager', 
+            'Add Employee',
+            'Remove Employee',
+            'Update Employee Name',
+            'Update Employee Role',
+            'Update Employee Manager',
+            'View All Roles',
+            'Add Role',
+            'Remove Role',
+            'Update Role Title',
+            'Update Role Salary',
+            'Update Role Department',
+            'Add Deparment',
+            'Remove Department',
+            'Update Department Name',
+            'Exit'
+        ],
+    })
+    .then((answer) => {
+        switch(answer.choices) {
+            case 'View All Employees':
+                //
+                break;
+            case 'View Employees by Department':
+                //
+                break;
+            case 'View Employees by Manager':
+                //
+                break;
+            case 'Add Employee':
+                //
+                break;
+            case 'Remove Employee':
+                //
+                break;
+            case 'Update Employee Name':
+                //
+                break;
+            case 'Update Employee Role':
+                //
+                break;
+            case 'Update Employee Manager':
+                //
+                break;
+            case 'View All Roles':
+                //
+                break;
+            case 'Add Role':
+                //
+                break;
+            case 'Remove Role':
+                //
+                break;
+            case 'Update Role Title':
+                //
+                break;
+            case 'Update Role Salary':
+                //
+                break;
+            case 'Update Role Department':
+                //
+                break;
+            case 'Add Deparment':
+                //
+                break;
+            case 'Remove Department':
+                //
+                break;
+            case 'Update Department Name':
+                //
+                break;
+            case 'Exit':
+                connection.end();
+                break;
+        };
+    });
+};
+
