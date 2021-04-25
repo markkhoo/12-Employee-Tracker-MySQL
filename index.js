@@ -49,7 +49,7 @@ function initPrompt() {
     .then((answer) => {
         switch(answer.choices) {
             case 'View All Employees':
-                //
+                ViewAllEmployees();
                 break;
             case 'View Employees by Department':
                 //
@@ -106,3 +106,21 @@ function initPrompt() {
     });
 };
 
+// Function Display Table
+function displayInfo (tableToDisplay) {
+    console.log('\n');
+    console.table(tableToDisplay);
+    console.log('(Move up and down to select your next option)\n\n\n\n\n\n\n\n');
+}
+
+// Function View All Employees
+function ViewAllEmployees () {
+    const query01 = 'SELECT * FROM employee';
+    connection.query(query01, (err, res) => {
+        if(err) throw err;
+        displayInfo(res);
+    });
+    initPrompt();
+};
+
+// 
