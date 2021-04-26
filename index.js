@@ -72,7 +72,7 @@ function initPrompt() {
                 updateEmployeeRole();
                 break;
             case 'Update Employee Manager':
-                //
+                updateEmployeeManager();
                 break;
             case 'View All Roles':
                 viewAllRoles();
@@ -229,7 +229,7 @@ function updateEmployeeName () {
                 console.log('Updating Employee Name...\n');
                 connection.query(`
                     UPDATE employee SET first_name = '${answer.first}', last_name = '${answer.last}' WHERE id = ${employeeID}
-                `, (err, res) => {
+                ;`, (err, res) => {
                     if(err) throw err;
                     viewAllEmployees();
                 });
@@ -274,7 +274,7 @@ function updateEmployeeRole () {
                     tR.title role
                 FROM roles tR
                 ORDER BY title ASC
-            `, (err, res) => {
+            ;`, (err, res) => {
                 if(err) throw err;
                 objOfRoles = res;
                 for (let i = 0; i < res.length; i++) {
@@ -289,8 +289,9 @@ function updateEmployeeRole () {
                     roleID = objOfRoles[listOfRoles.indexOf(answer.role)].id;
                     connection.query(`
                         UPDATE employee SET roles_id = '${roleID}' WHERE id = '${employeeID}'
-                    `, (err, res) => {
+                    ;`, (err, res) => {
                         if(err) throw err;
+                        console.log('Updating Employee Role...\n');
                         viewAllEmployees();
                     });
                 });
@@ -300,7 +301,66 @@ function updateEmployeeRole () {
 };
 
 // Function Update Employee Manager
-
+function updateEmployeeManager () {
+    let objOfNames;
+    let listOfNames = [];
+    let employeeID = 0;
+    let objOfManagers;
+    let listOfManagers = [];
+    let managerID = 0;
+    connection.query(`
+        SELECT
+            t1.id id,
+            CONCAT(t1.first_name, ' ', t1.last_name) employee,
+            CONCAT(t2.first_name, ' ', t2.last_name) manager
+        FROM employee t1 
+        INNER JOIN employee t2 
+        ON t1.manager_id = t2.id 
+        ORDER BY t1.id ASC
+    ;`, (err, res) => {
+        if(err) throw err;
+        objOfNames = res;
+        for (let i = 0; i < res.length; i++) {
+            listOfNames.push(`Employee: ${res[i].employee} - Manager: ${res[i].manager}`);
+        };
+        inquirer.prompt({
+            name: 'employee',
+            type: 'list',
+            message: 'Which Employee would you like to update the manager of?',
+            choices: listOfNames
+        }).then((answer) => {
+            employeeID = objOfNames[listOfNames.indexOf(answer.employee)].id;
+            connection.query(`
+                SELECT
+                    t1.id id,
+                    CONCAT(t1.first_name, ' ', t1.last_name) employee
+                FROM employee t1
+                ORDER BY t1.last_name ASC
+            ;`, (err, res) => {
+                if(err) throw err;
+                objOfManagers = res;
+                for (let i = 0; i < res.length; i++) {
+                    listOfManagers.push(res[i].employee);
+                };
+                inquirer.prompt({
+                    name: 'manager',
+                    type: 'list',
+                    message: 'Who is the manager of this employee?',
+                    choices: listOfManagers
+                }).then((answer) => {
+                    managerID = objOfManagers[listOfManagers.indexOf(answer.manager)].id;
+                    connection.query(`
+                        UPDATE employee SET manager_id = '${managerID}' WHERE id = '${employeeID}'
+                    `, (err, res) => {
+                        if(err) throw err;
+                        console.log('Updating the Manager of Employee...\n');
+                        viewAllEmployees();
+                    });
+                });
+            });
+        });
+    });
+};
 
 // Function View All Roles
 function viewAllRoles () {
