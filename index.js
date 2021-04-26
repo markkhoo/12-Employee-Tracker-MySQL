@@ -96,7 +96,7 @@ function initPrompt() {
                 viewAllDepartment();
                 break;
             case 'Add Deparment':
-                //
+                addDepartment();
                 break;
             case 'Remove Department':
                 //
@@ -279,7 +279,20 @@ function viewAllDepartment () {
 };
 
 // Function Add Department
-
+function addDepartment () {
+    inquirer.prompt({
+        name: 'department',
+        type: 'input',
+        message: 'What is the Department?'
+    }).then((answer) => {
+        connection.query('INSERT INTO department SET ?', {
+            name: answer.department,
+        }, (err, res) => {
+            if(err) throw err;
+            viewAllDepartment();
+        });
+    });
+};
 
 // Function Remove Department
 
