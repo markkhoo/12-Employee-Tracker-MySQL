@@ -66,10 +66,10 @@ function initPrompt() {
                 //
                 break;
             case 'Update Employee Name':
-                //
+                updateEmployeeName();
                 break;
             case 'Update Employee Role':
-                //
+                updateEmployeeRole();
                 break;
             case 'Update Employee Manager':
                 //
@@ -116,7 +116,7 @@ function displayInfo (tableToDisplay) {
     console.log('\n');
     console.table(tableToDisplay);
     console.log('(Move up and down to select your next option)\n\n\n\n\n\n\n\n');
-}
+};
 
 // Function View All Employees
 function viewAllEmployees () {
@@ -166,7 +166,6 @@ function addEmployee () {
             name: 'managerID',
             type: 'number',
             message: 'What is the ID of the Employees Manager?'
-
         },
         {
             name: 'roleID',
@@ -191,10 +190,70 @@ function addEmployee () {
 
 
 // Function Update Employee Name
-
+function updateEmployeeName () {
+    let objOfNames;
+    let listOfNames = [];
+    let employeeID = 0;
+    connection.query(`
+        SELECT
+            t1.id id,
+            CONCAT(t1.first_name, ' ', t1.last_name) employee
+        FROM
+            employee t1
+        ORDER BY id ASC
+    ;`, (err, res) => {
+        if(err) throw err;
+        for (let i = 0; i < res.length; i++) {
+            listOfNames.push(res[i].employee);
+            objOfNames = res;
+        };
+        inquirer.prompt({
+            name: 'full_name',
+            type: 'list',
+            message: 'Which Employee would you like to update the name of?',
+            choices: listOfNames
+        }).then((answer) => {
+            employeeID = objOfNames[listOfNames.indexOf(answer.full_name)].id;
+            inquirer.prompt([
+                {
+                    name: 'first',
+                    type: 'input',
+                    message: 'What is the first name of the Employee?'
+                },
+                {
+                    name: 'last',
+                    type: 'input',
+                    message: 'What is the last name of the Employee?'
+                },
+            ]).then((answer) => {
+                console.log('Updating Employee Name...\n');
+                connection.query(
+                    `UPDATE employee SET first_name = '${answer.first}', last_name = '${answer.last}' WHERE id = ${employeeID}`,
+                    (err, res) => {
+                        if(err) throw err;
+                        viewAllEmployees();
+                    }
+                );
+            });
+        });
+    });
+};
 
 // Function Update Employee Role
+function updateEmployeeRole () {
 
+    connection.query(`
+        SELECT
+            t1.id id,
+            CONCAT(t1.first_name, ' ', t1.last_name) employee
+        FROM
+            employee t1
+        ORDER BY id ASC
+    ;`, (err, res) => {
+        if(err) throw err;
+        console.log(res)
+    });
+};
 
 // Function Update Employee Manager
 
@@ -238,7 +297,7 @@ function addRole () {
             message: 'What is the department ID of this Role?'
         },
     ]).then((answer) => {
-        console.log('Inserting a new Employee...\n');
+        console.log('Inserting a new Role...\n');
         connection.query('INSERT INTO roles SET ?',{
             title: answer.title,
             salary: answer.salary,
@@ -289,6 +348,7 @@ function addDepartment () {
             name: answer.department,
         }, (err, res) => {
             if(err) throw err;
+            console.log('Inserting a new Department...\n');
             viewAllDepartment();
         });
     });
