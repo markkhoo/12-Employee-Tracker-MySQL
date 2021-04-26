@@ -54,16 +54,16 @@ function initPrompt() {
                 viewAllEmployees();
                 break;
             case 'View Employees by Department':
-                //
+                workInProgess(); // Function to be created
                 break;
             case 'View Employees by Manager':
-                //
+                workInProgess(); // Function to be created
                 break;
             case 'Add Employee':
                 addEmployee();
                 break;
             case 'Remove Employee':
-                //
+                workInProgess(); // Function to be created
                 break;
             case 'Update Employee Name':
                 updateEmployeeName();
@@ -81,16 +81,16 @@ function initPrompt() {
                 addRole();
                 break;
             case 'Remove Role':
-                //
+                workInProgess(); // Function to be created
                 break;
             case 'Update Role Title':
-                //
+                workInProgess(); // Function to be created
                 break;
             case 'Update Role Salary':
-                //
+                workInProgess(); // Function to be created
                 break;
             case 'Update Role Department':
-                //
+                workInProgess(); // Function to be created
                 break;
             case 'View All Departments':
                 viewAllDepartment();
@@ -99,10 +99,10 @@ function initPrompt() {
                 addDepartment();
                 break;
             case 'Remove Department':
-                //
+                workInProgess(); // Function to be created
                 break;
             case 'Update Department Name':
-                //
+                workInProgess(); // Function to be created
                 break;
             case 'Exit':
                 connection.end();
@@ -462,3 +462,10 @@ function addDepartment () {
 
 
 // Function Update Department Name
+
+
+// Function NOT YET IMPLEMENTED 
+function workInProgess () {
+    console.log('Not yet implemented. \nTry something else...');
+    initPrompt();
+};
