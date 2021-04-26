@@ -134,7 +134,7 @@ function viewAllEmployees () {
             ON t2.roles_id = tR.id 
                 INNER JOIN department tD
                 ON tR.department_id = tD.id
-        ORDER BY employee ASC
+        ORDER BY t1.last_name ASC
     ;`;
     connection.query(query01, (err, res) => {
         if(err) throw err;
@@ -200,12 +200,12 @@ function updateEmployeeName () {
             CONCAT(t1.first_name, ' ', t1.last_name) employee
         FROM
             employee t1
-        ORDER BY id ASC
+        ORDER BY last_name ASC
     ;`, (err, res) => {
         if(err) throw err;
+        objOfNames = res;
         for (let i = 0; i < res.length; i++) {
             listOfNames.push(res[i].employee);
-            objOfNames = res;
         };
         inquirer.prompt({
             name: 'full_name',
@@ -227,13 +227,12 @@ function updateEmployeeName () {
                 },
             ]).then((answer) => {
                 console.log('Updating Employee Name...\n');
-                connection.query(
-                    `UPDATE employee SET first_name = '${answer.first}', last_name = '${answer.last}' WHERE id = ${employeeID}`,
-                    (err, res) => {
-                        if(err) throw err;
-                        viewAllEmployees();
-                    }
-                );
+                connection.query(`
+                    UPDATE employee SET first_name = '${answer.first}', last_name = '${answer.last}' WHERE id = ${employeeID}
+                `, (err, res) => {
+                    if(err) throw err;
+                    viewAllEmployees();
+                });
             });
         });
     });
@@ -241,17 +240,62 @@ function updateEmployeeName () {
 
 // Function Update Employee Role
 function updateEmployeeRole () {
-
+    let objOfNames;
+    let listOfNames = [];
+    let employeeID = 0;
+    let objOfRoles;
+    let listOfRoles = [];
+    let roleID = 0;
     connection.query(`
         SELECT
             t1.id id,
-            CONCAT(t1.first_name, ' ', t1.last_name) employee
-        FROM
-            employee t1
+            CONCAT(t1.first_name, ' ', t1.last_name) employee,
+            tR.title role
+        FROM employee t1
+        INNER JOIN roles tR
+        ON t1.roles_id = tR.id 
         ORDER BY id ASC
     ;`, (err, res) => {
         if(err) throw err;
-        console.log(res)
+        objOfNames = res;
+        for (let i = 0; i < res.length; i++) {
+            listOfNames.push(`${res[i].employee}: ${res[i].role}`);
+        };
+        inquirer.prompt({
+            name: 'employee',
+            type: 'list',
+            message: 'Which Employee would you like to update the role of?',
+            choices: listOfNames
+        }).then((answer) => {
+            employeeID = objOfNames[listOfNames.indexOf(answer.employee)].id;
+            connection.query(`
+                SELECT
+                    tR.id id,
+                    tR.title role
+                FROM roles tR
+                ORDER BY title ASC
+            `, (err, res) => {
+                if(err) throw err;
+                objOfRoles = res;
+                for (let i = 0; i < res.length; i++) {
+                    listOfRoles.push(res[i].role);
+                };
+                inquirer.prompt({
+                    name: 'role',
+                    type: 'list',
+                    message: 'What role would you like to use?',
+                    choices: listOfRoles
+                }).then((answer) => {
+                    roleID = objOfRoles[listOfRoles.indexOf(answer.role)].id;
+                    connection.query(`
+                        UPDATE employee SET roles_id = '${roleID}' WHERE id = '${employeeID}'
+                    `, (err, res) => {
+                        if(err) throw err;
+                        viewAllEmployees();
+                    });
+                });
+            });
+        });
     });
 };
 
