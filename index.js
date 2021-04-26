@@ -131,7 +131,7 @@ function viewAllEmployees () {
         INNER JOIN employee t2 
         ON t1.manager_id = t2.id 
             INNER JOIN roles tR 
-            ON t2.roles_id = tR.id 
+            ON t1.roles_id = tR.id 
                 INNER JOIN department tD
                 ON tR.department_id = tD.id
         ORDER BY t1.last_name ASC

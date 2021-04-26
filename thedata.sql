@@ -43,7 +43,7 @@ INSERT INTO department (name) VALUES ("Sales");
 
 -- INSERT INTO roles
 INSERT INTO roles (title, salary, department_id) VALUES ("Software Engineer", 150000, 1);
-INSERT INTO roles (title, salary, department_id) VALUES ("UX/UI Engineer", 140000, 1);
+INSERT INTO roles (title, salary, department_id) VALUES ("UX-UI Engineer", 140000, 1);
 INSERT INTO roles (title, salary, department_id) VALUES ("Cloud Engineer", 155000, 1);
 
 INSERT INTO roles (title, salary, department_id) VALUES ("Sales Lead", 100000, 2);
