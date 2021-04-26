@@ -51,7 +51,7 @@ function initPrompt() {
     .then((answer) => {
         switch(answer.choices) {
             case 'View All Employees':
-                ViewAllEmployees();
+                viewAllEmployees();
                 break;
             case 'View Employees by Department':
                 //
@@ -60,7 +60,7 @@ function initPrompt() {
                 //
                 break;
             case 'Add Employee':
-                //
+                addEmployee();
                 break;
             case 'Remove Employee':
                 //
@@ -75,10 +75,10 @@ function initPrompt() {
                 //
                 break;
             case 'View All Roles':
-                ViewAllRoles();
+                viewAllRoles();
                 break;
             case 'Add Role':
-                //
+                addRole();
                 break;
             case 'Remove Role':
                 //
@@ -93,7 +93,7 @@ function initPrompt() {
                 //
                 break;
             case 'View All Departments':
-                ViewAllDepartment();
+                viewAllDepartment();
                 break;
             case 'Add Deparment':
                 //
@@ -119,9 +119,10 @@ function displayInfo (tableToDisplay) {
 }
 
 // Function View All Employees
-function ViewAllEmployees () {
+function viewAllEmployees () {
     const query01 = `
         SELECT 
+            t1.id ID,
             CONCAT(t1.first_name, ' ', t1.last_name) Employee,
             tR.title Role,
             tD.name Department,
@@ -149,7 +150,42 @@ function ViewAllEmployees () {
 
 
 // Function Add Employee
+function addEmployee () {
+    inquirer.prompt([
+        {
+            name: 'first',
+            type: 'input',
+            message: 'What is the first name of the Employee?'
+        },
+        {
+            name: 'last',
+            type: 'input',
+            message: 'What is the last name of the Employee?'
+        },
+        {
+            name: 'managerID',
+            type: 'number',
+            message: 'What is the ID of the Employees Manager?'
 
+        },
+        {
+            name: 'roleID',
+            type: 'number',
+            message: 'What is the ID of the Employees Role?'
+        },
+    ]).then((answer) => {
+        console.log('Inserting a new Employee...\n');
+        connection.query('INSERT INTO employee SET ?',{
+            first_name: answer.first,
+            last_name: answer.last,
+            manager_id: answer.managerID,
+            roles_id: answer.roleID,
+        }, (err, res) => {
+            if(err) throw err;
+            viewAllEmployees();
+        });
+    });
+};
 
 // Function Remove Employee
 
@@ -164,9 +200,10 @@ function ViewAllEmployees () {
 
 
 // Function View All Roles
-function ViewAllRoles (){
+function viewAllRoles () {
     const query09 = `
         SELECT 
+            tr.id ID,
             tR.title Role,
             tR.salary Salary,
             tD.name Department
@@ -183,7 +220,35 @@ function ViewAllRoles (){
 };
 
 // Function Add Role
-
+function addRole () {
+    inquirer.prompt([
+        {
+            name: 'title',
+            type: 'input',
+            message: 'What is the Role?'
+        },
+        {
+            name: 'salary',
+            type: 'number',
+            message: 'What is the Salary of this Role?'
+        },
+        {
+            name: 'departmentID',
+            type: 'number',
+            message: 'What is the department ID of this Role?'
+        },
+    ]).then((answer) => {
+        console.log('Inserting a new Employee...\n');
+        connection.query('INSERT INTO roles SET ?',{
+            title: answer.title,
+            salary: answer.salary,
+            department_id: answer.departmentID,
+        }, (err, res) => {
+            if(err) throw err;
+            viewAllRoles();
+        });
+    });
+};
 
 // Function Remove Role
 
@@ -198,9 +263,10 @@ function ViewAllRoles (){
 
 
 // Function View All Departments
-function ViewAllDepartment () {
+function viewAllDepartment () {
     const query15 = `
         SELECT
+            tD.id ID,
             tD.name Department 
         FROM department tD
         ORDER BY name ASC
