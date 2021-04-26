@@ -13,7 +13,7 @@ const connection = mysql.createConnection({
 // Init connection
 connection.connect((err) => {
     if (err) throw err;
-    console.log(`connected as id ${connection.threadId}\n`);
+    console.log(`connected as id ${connection.threadId}`);
 
     // Run initial prompt
     initPrompt();
@@ -21,6 +21,7 @@ connection.connect((err) => {
 
 // Function give users the options to search
 function initPrompt() {
+    console.log('\n');
     inquirer.prompt({
         name: 'choices',
         type: 'list',
@@ -40,6 +41,7 @@ function initPrompt() {
             'Update Role Title',
             'Update Role Salary',
             'Update Role Department',
+            'View All Departments',
             'Add Deparment',
             'Remove Department',
             'Update Department Name',
@@ -73,7 +75,7 @@ function initPrompt() {
                 //
                 break;
             case 'View All Roles':
-                //
+                ViewAllRoles();
                 break;
             case 'Add Role':
                 //
@@ -89,6 +91,9 @@ function initPrompt() {
                 break;
             case 'Update Role Department':
                 //
+                break;
+            case 'View All Departments':
+                ViewAllDepartment();
                 break;
             case 'Add Deparment':
                 //
@@ -115,7 +120,21 @@ function displayInfo (tableToDisplay) {
 
 // Function View All Employees
 function ViewAllEmployees () {
-    const query01 = 'SELECT * FROM employee';
+    const query01 = `
+        SELECT 
+            CONCAT(t1.first_name, ' ', t1.last_name) Employee,
+            tR.title Role,
+            tD.name Department,
+            CONCAT(t2.first_name, ' ', t2.last_name) Manager
+        FROM employee t1 
+        INNER JOIN employee t2 
+        ON t1.manager_id = t2.id 
+            INNER JOIN roles tR 
+            ON t2.roles_id = tR.id 
+                INNER JOIN department tD
+                ON tR.department_id = tD.id
+        ORDER BY employee ASC
+    ;`;
     connection.query(query01, (err, res) => {
         if(err) throw err;
         displayInfo(res);
@@ -123,4 +142,80 @@ function ViewAllEmployees () {
     initPrompt();
 };
 
-// 
+// Function View Employees by Department
+
+
+// Function View Employees by Manager
+
+
+// Function Add Employee
+
+
+// Function Remove Employee
+
+
+// Function Update Employee Name
+
+
+// Function Update Employee Role
+
+
+// Function Update Employee Manager
+
+
+// Function View All Roles
+function ViewAllRoles (){
+    const query09 = `
+        SELECT 
+            tR.title Role,
+            tR.salary Salary,
+            tD.name Department
+        FROM roles tR 
+        INNER JOIN department tD
+        ON tR.department_id = tD.id
+        ORDER BY Role ASC
+    ;`;
+    connection.query(query09, (err, res) => {
+        if(err) throw err;
+        displayInfo(res);
+    });
+    initPrompt();
+};
+
+// Function Add Role
+
+
+// Function Remove Role
+
+
+// Function Update Role Title
+
+
+// Function Update Role Salary
+
+
+// Function Update Role Department
+
+
+// Function View All Departments
+function ViewAllDepartment () {
+    const query15 = `
+        SELECT
+            tD.name Department 
+        FROM department tD
+        ORDER BY name ASC
+    ;`;
+    connection.query(query15, (err, res) => {
+        if(err) throw err;
+        displayInfo(res);
+    });
+    initPrompt();
+};
+
+// Function Add Department
+
+
+// Function Remove Department
+
+
+// Function Update Department Name
